@@ -42,8 +42,8 @@ export default class RestApiPlugin extends ApiPlugin {
       const headerList = actionConfiguration.headers;
       if (headerList) {
         headers = headerList.reduce<Record<string, unknown>>((o: Record<string, unknown>, p: Property, _i: number, _ps: Property[]) => {
-          if (!p) return o;
-          if (!Object.prototype.hasOwnProperty.call(o, p?.key) && p?.key !== '') {
+          if (!p || !p?.key) return o;
+          if (!Object.prototype.hasOwnProperty.call(o, p?.key)) {
             o[p.key] = p.value;
           }
           return o;
