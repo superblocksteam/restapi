@@ -1,6 +1,6 @@
 {
   "name": "@superblocksteam/restapi",
-  "version": "0.2205.0",
+  "version": "0.2223.0",
   "description": "Superblocks REST API Plugin",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
