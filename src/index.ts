@@ -62,7 +62,9 @@ export default class RestApiPlugin extends ApiPlugin {
       url: url.toString(),
       method: actionConfiguration.httpMethod.toString() as Method,
       headers: headers,
-      timeout: this.pluginConfiguration.restApiExecutionTimeoutMs
+      timeout: this.pluginConfiguration.restApiExecutionTimeoutMs,
+      maxBodyLength: this.pluginConfiguration.restApiMaxContentLengthBytes,
+      maxContentLength: this.pluginConfiguration.restApiMaxContentLengthBytes
     };
 
     updateRequestBody({
