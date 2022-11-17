@@ -8,7 +8,8 @@ import {
   RawRequest,
   RestApiActionConfiguration,
   RestApiDatasourceConfiguration,
-  RestApiFields
+  RestApiFields,
+  REST_API_DEFAULT_USER_AGENT
 } from '@superblocksteam/shared';
 import { ApiPlugin, PluginExecutionProps, updateRequestBody } from '@superblocksteam/shared-backend';
 import { AxiosRequestConfig, Method } from 'axios';
@@ -57,9 +58,22 @@ export default class RestApiPlugin extends ApiPlugin {
       throw new IntegrationError('No HTTP method specified for REST API step');
     }
 
+    // Set User-Agent if it's not set by user.
+    // With the latest RestApi template, newly created RestApi action has 'User-Agent' by default,
+    // the following lines are still required for existing RestApi actions
+    if (
+      !Object.keys(headers).some((k) => {
+        return 'user-agent' === k.toLowerCase();
+      })
+    ) {
+      headers['User-Agent'] = REST_API_DEFAULT_USER_AGENT;
+    }
+
     // TODO: Refactor and reuse the generateRequestConfig function from ApiPlugin
     const options: AxiosRequestConfig = {
       url: url.toString(),
+      // request arraybuffer and let extractResponseData figure out the correct data type for the response body
+      responseType: 'arraybuffer',
       method: actionConfiguration.httpMethod.toString() as Method,
       headers: headers,
       timeout: this.pluginConfiguration.restApiExecutionTimeoutMs,
@@ -73,7 +87,7 @@ export default class RestApiPlugin extends ApiPlugin {
       options: options
     });
 
-    return await this.executeRequest(options);
+    return await this.executeRequest(options, actionConfiguration.responseType);
   }
 
   getRequest(actionConfiguration: RestApiActionConfiguration): RawRequest {
